@@ -60,21 +60,22 @@ const PrizePopup = () => {
               <p className="mt-3 text-sm text-muted-foreground">
                 Your ${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} prize has been added to your wallet. It stays active for {hours} hours.
               </p>
-            <button
-              className="btn-ink mt-6 h-12 w-full text-sm font-semibold"
-              onClick={() => {
-                setOpen(false);
-                navigate({ to: "/wallet" });
-              }}
-            >
-              Open Wallet
-            </button>
-            <button
-              className="mt-3 w-full py-2 text-xs text-muted-foreground"
-              onClick={() => setOpen(false)}
-            >
-              Later
-            </button>
+              <button
+                className="btn-ink mt-6 h-12 w-full text-sm font-semibold"
+                onClick={() => {
+                  setOpen(false);
+                  navigate({ to: "/wallet" });
+                }}
+              >
+                Open Wallet
+              </button>
+              <button
+                className="mt-3 w-full py-2 text-xs text-muted-foreground"
+                onClick={() => setOpen(false)}
+              >
+                Later
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
