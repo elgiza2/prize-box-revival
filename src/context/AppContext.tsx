@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import {
   fetchOwnProfile,
+  grantWelcomePrizeForTelegram,
   findOrCreateProfile,
   startMiningForTelegram,
   syncMiningForTelegram,

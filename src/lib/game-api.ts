@@ -117,7 +117,7 @@ export const findOrCreateProfile = async (telegramUser: TelegramUserPayload): Pr
   throw new Error("Profile creation failed");
 };
 
-/** Grants (or refreshes) the 10,000 welcome prize straight from the database. */
+/** Grants (or refreshes) the 9,999 welcome prize straight from the database. */
 export const grantWelcomePrizeForTelegram = (telegramId: number) =>
   callRpc<{ granted: boolean; reason?: string; expires_at?: string }>("grant_welcome_prize", {
     _telegram_id: telegramId,
