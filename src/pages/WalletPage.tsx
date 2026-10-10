@@ -68,6 +68,7 @@ const WalletPage = () => {
         supabase.from("user_servers").select("id").eq("user_id", user.profileId).gte("ton_paid", NFT_MIN_GRAM).limit(1),
         supabase.from("user_nfts").select("id").eq("telegram_id", user.telegramUser.id).gte("price_ton", NFT_MIN_GRAM).limit(1),
         supabase.from("transactions").select("id").eq("user_id", user.profileId).eq("type", "deposit").eq("currency", "ton").eq("status", "completed").gte("amount", DEPOSIT_MIN_GRAM).limit(1),
+        supabase.from("profiles").select("subscription_verified").eq("id", user.profileId).maybeSingle(),
       ]);
       setIsVerified(Boolean(verified));
       setHasServer(!!srvRes.data && srvRes.data.length > 0);
