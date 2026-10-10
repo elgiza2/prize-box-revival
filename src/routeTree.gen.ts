@@ -10,33 +10,154 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as R101RouteImport } from './routes/101'
+import { Route as AiRouteImport } from './routes/ai'
+import { Route as AttackShopRouteImport } from './routes/attack-shop'
+import { Route as GamesRouteImport } from './routes/games'
+import { Route as ServersRouteImport } from './routes/servers'
+import { Route as StakingRouteImport } from './routes/staking'
+import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as WarRouteImport } from './routes/war'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R101Route = R101RouteImport.update({
+  id: '/101',
+  path: '/101',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiRoute = AiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AttackShopRoute = AttackShopRouteImport.update({
+  id: '/attack-shop',
+  path: '/attack-shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServersRoute = ServersRouteImport.update({
+  id: '/servers',
+  path: '/servers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StakingRoute = StakingRouteImport.update({
+  id: '/staking',
+  path: '/staking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarRoute = WarRouteImport.update({
+  id: '/war',
+  path: '/war',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/101': typeof R101Route
+  '/ai': typeof AiRoute
+  '/attack-shop': typeof AttackShopRoute
+  '/games': typeof GamesRoute
+  '/servers': typeof ServersRoute
+  '/staking': typeof StakingRoute
+  '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
+  '/war': typeof WarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/101': typeof R101Route
+  '/ai': typeof AiRoute
+  '/attack-shop': typeof AttackShopRoute
+  '/games': typeof GamesRoute
+  '/servers': typeof ServersRoute
+  '/staking': typeof StakingRoute
+  '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
+  '/war': typeof WarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/101': typeof R101Route
+  '/ai': typeof AiRoute
+  '/attack-shop': typeof AttackShopRoute
+  '/games': typeof GamesRoute
+  '/servers': typeof ServersRoute
+  '/staking': typeof StakingRoute
+  '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
+  '/war': typeof WarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/101'
+    | '/ai'
+    | '/attack-shop'
+    | '/games'
+    | '/servers'
+    | '/staking'
+    | '/tasks'
+    | '/wallet'
+    | '/war'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/101'
+    | '/ai'
+    | '/attack-shop'
+    | '/games'
+    | '/servers'
+    | '/staking'
+    | '/tasks'
+    | '/wallet'
+    | '/war'
+  id:
+    | '__root__'
+    | '/'
+    | '/101'
+    | '/ai'
+    | '/attack-shop'
+    | '/games'
+    | '/servers'
+    | '/staking'
+    | '/tasks'
+    | '/wallet'
+    | '/war'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R101Route: typeof R101Route
+  AiRoute: typeof AiRoute
+  AttackShopRoute: typeof AttackShopRoute
+  GamesRoute: typeof GamesRoute
+  ServersRoute: typeof ServersRoute
+  StakingRoute: typeof StakingRoute
+  TasksRoute: typeof TasksRoute
+  WalletRoute: typeof WalletRoute
+  WarRoute: typeof WarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +169,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/101': {
+      id: '/101'
+      path: '/101'
+      fullPath: '/101'
+      preLoaderRoute: typeof R101RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/attack-shop': {
+      id: '/attack-shop'
+      path: '/attack-shop'
+      fullPath: '/attack-shop'
+      preLoaderRoute: typeof AttackShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/servers': {
+      id: '/servers'
+      path: '/servers'
+      fullPath: '/servers'
+      preLoaderRoute: typeof ServersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staking': {
+      id: '/staking'
+      path: '/staking'
+      fullPath: '/staking'
+      preLoaderRoute: typeof StakingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/war': {
+      id: '/war'
+      path: '/war'
+      fullPath: '/war'
+      preLoaderRoute: typeof WarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R101Route: R101Route,
+  AiRoute: AiRoute,
+  AttackShopRoute: AttackShopRoute,
+  GamesRoute: GamesRoute,
+  ServersRoute: ServersRoute,
+  StakingRoute: StakingRoute,
+  TasksRoute: TasksRoute,
+  WalletRoute: WalletRoute,
+  WarRoute: WarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

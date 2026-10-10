@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.grant_welcome_prize(bigint) TO anon, authenticated;

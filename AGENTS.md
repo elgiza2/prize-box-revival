@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the Gram image URL centralized in the currency icon module so balances, games, and market displays use the same brand asset.
+- Serve the shared moving background with local MP4 and WebM sources plus a poster because Telegram WebViews differ in video decoding support.

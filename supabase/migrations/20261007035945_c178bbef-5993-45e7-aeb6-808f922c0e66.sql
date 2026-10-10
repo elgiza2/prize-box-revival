@@ -1,0 +1,1 @@
+ALTER TABLE public.mining_sessions ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();

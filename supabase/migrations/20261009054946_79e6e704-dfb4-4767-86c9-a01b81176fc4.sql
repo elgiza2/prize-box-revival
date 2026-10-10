@@ -1,0 +1,1 @@
+UPDATE public.tasks SET is_pinned = true, reward_amount = 500, reward_type = 'siri' WHERE id IN ('69c6ac55-14b1-4190-b660-1f6dcf54d189'::uuid, 'e59cebce-bf0a-4a4f-a13d-8b68d606fceb'::uuid);
