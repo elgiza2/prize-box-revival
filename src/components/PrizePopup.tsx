@@ -11,13 +11,19 @@ const PrizePopup = () => {
   const [open, setOpen] = useState(false);
   const amount = Number(user.rewardBalance ?? 0);
 
+  // Show once on every app open (after the profile loads), and on demand.
+  const [shown, setShown] = useState(false);
   useEffect(() => {
-    if (amount <= 0 || !user.rewardExpiresAt) return;
-    const key = `${SEEN_KEY}_${user.rewardExpiresAt}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, "1");
+    if (shown || !user.profileId) return;
+    setShown(true);
     setOpen(true);
-  }, [amount, user.rewardExpiresAt]);
+  }, [shown, user.profileId]);
+
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener("nova:open-prize", handler);
+    return () => window.removeEventListener("nova:open-prize", handler);
+  }, []);
 
   const hours = user.rewardExpiresAt
     ? Math.max(0, Math.round((new Date(user.rewardExpiresAt).getTime() - Date.now()) / 3600000))

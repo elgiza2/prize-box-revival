@@ -26,6 +26,17 @@ const MiningPage = () => {
   return (
     <SpotlightHero title="NOVA AI" center>
       <div className="flex w-full flex-col px-5 pb-28 pt-2">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("nova:open-prize"))}
+          className="paper-row mb-4 flex w-full items-center justify-between px-4 py-3.5 text-left"
+        >
+          <span>
+            <span className="paper-eyebrow block">Welcome Prize</span>
+            <span className="mt-1 block text-sm font-semibold text-foreground">Claim your $9,999 reward</span>
+          </span>
+          <span className="btn-ink h-9 px-4 text-xs font-semibold">View</span>
+        </button>
         <motion.div
           className="nv-card p-6"
           initial={{ opacity: 0, y: 16 }}
