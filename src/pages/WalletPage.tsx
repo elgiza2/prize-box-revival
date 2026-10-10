@@ -272,6 +272,7 @@ const WalletPage = () => {
         wallet_not_verified: "Verify your wallet first",
         nft_required: `Buy an NFT worth at least ${NFT_MIN_GRAM} Gram first`,
         deposit_required: `Make one completed deposit of at least ${DEPOSIT_MIN_GRAM} Gram first`,
+        subscription_required: "Subscribe to the annual plan on megsyai.com first",
         insufficient_balance: "Your balance is not enough for this withdrawal",
         pending_request_exists: "You already have a pending withdrawal for this currency",
         no_wallet: "Connect your TON wallet first",
@@ -306,6 +307,7 @@ const WalletPage = () => {
       toast({ title: "Wallet verified", description: "Your wallet ownership is confirmed" });
       if (!hasNft) setReqOpen("nft");
       else if (!hasRequiredDeposit) setReqOpen("deposit");
+      else if (!hasSubscription) openSubscriptionStep();
       else {
         setWithdrawCurrency("ton");
         setWithdrawOpen(true);
