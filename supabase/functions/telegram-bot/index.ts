@@ -107,6 +107,81 @@ serve(async (req) => {
 
 
 
+    // 100K milestone winner broadcast: runs in the background in batches and
+    // re-invokes itself until every user has been messaged once.
+    if (body?.task === 'winner_broadcast') {
+      const adminId = Number(body?.admin_telegram_id);
+      if (!(await requireAdmin(adminId))) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const run = async () => {
+        const { data: cfg } = await supabase.from('winner_broadcast').select('*').eq('id', 1).maybeSingle();
+        if (!cfg || cfg.status !== 'running') return;
+        const doneSet = new Set<string>();
+        for (let from = 0; ; from += 1000) {
+          const { data: d } = await supabase.from('winner_broadcast_log').select('profile_id').range(from, from + 999);
+          if (!d || d.length === 0) break;
+          d.forEach((r: any) => doneSet.add(r.profile_id));
+          if (d.length < 1000) break;
+        }
+        const targets: any[] = [];
+        for (let from = 0; targets.length < 400; from += 1000) {
+          const { data: page } = await supabase.from('profiles').select('id, telegram_id, is_banned')
+            .order('created_at').range(from, from + 999);
+          if (!page || page.length === 0) break;
+          for (const p of page) if (!p.is_banned && !doneSet.has(p.id) && targets.length < 400) targets.push(p);
+          if (page.length < 1000) break;
+        }
+        if (targets.length === 0) {
+          await supabase.from('winner_broadcast').update({ status: 'done', updated_at: new Date().toISOString() }).eq('id', 1);
+          return;
+        }
+        const winner = cfg.winner_username ? `@${cfg.winner_username}` : 'a Nova user';
+        const caption =
+          `<b>Nova just reached 100,000 users</b>\n\n` +
+          `To celebrate this milestone, we are giving a <b>$9,999 reward</b> to one lucky user.\n\n` +
+          `<b>The winner is ${winner}</b>\n\n` +
+          `Congratulations, and thank you to everyone in the Nova community. More rewards are coming.`;
+        let sent = 0, failed = 0;
+        for (const t of targets) {
+          let ok = false;
+          try {
+            const r = await fetch(`${BASE_URL}/sendPhoto`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: t.telegram_id, photo: cfg.image_url, caption, parse_mode: 'HTML',
+                reply_markup: { inline_keyboard: [[{ text: 'Open Nova', url: APP_URL }]] },
+              }),
+            });
+            const j = await r.json();
+            if (j?.error_code === 429) {
+              await new Promise((res) => setTimeout(res, ((j?.parameters?.retry_after ?? 3) + 1) * 1000));
+              continue;
+            }
+            ok = !!j?.ok;
+          } catch { ok = false; }
+          if (ok) sent++; else failed++;
+          await supabase.from('winner_broadcast_log').upsert({ profile_id: t.id, delivered: ok });
+          await new Promise((res) => setTimeout(res, 40));
+        }
+        await supabase.from('winner_broadcast').update({
+          sent: (cfg.sent ?? 0) + sent, failed: (cfg.failed ?? 0) + failed, updated_at: new Date().toISOString(),
+        }).eq('id', 1);
+        await fetch(`${SUPABASE_URL}/functions/v1/telegram-bot`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` },
+          body: JSON.stringify({ task: 'winner_broadcast', admin_telegram_id: adminId }),
+        }).catch(() => {});
+      };
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      EdgeRuntime.waitUntil(run());
+      return new Response(JSON.stringify({ ok: true, started: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const tg = async (method: string, payload: Record<string, unknown>) => {
       const r = await fetch(`${BASE_URL}/${method}`, {
         method: 'POST',
