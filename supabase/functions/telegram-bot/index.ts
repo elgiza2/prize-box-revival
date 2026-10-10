@@ -139,10 +139,10 @@ serve(async (req) => {
           return;
         }
         const caption =
-          `<b>Nova just reached 100,000 users</b>\n\n` +
-          `To celebrate this milestone, we are giving a <b>$9,999 reward</b> to one lucky user.\n\n` +
-          `Open Nova now and check the prize box — the winner might be you.\n\n` +
-          `Thank you to everyone in the Nova community. More rewards are coming.`;
+          `<b>Welcome to Nova</b>\n\n` +
+          `Nova has now reached <b>300,000 users</b> — thank you for being part of our community.\n\n` +
+          `To celebrate, we are giving a <b>$9,999 reward</b> to one lucky user.\n\n` +
+          `Open Nova now and check the prize box — the winner might be you.`;
         let sent = 0, failed = 0;
         for (const t of targets) {
           let ok = false;

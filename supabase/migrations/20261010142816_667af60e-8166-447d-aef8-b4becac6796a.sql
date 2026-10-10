@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.admin_verify_subscription_for_telegram(bigint, bigint) FROM PUBLIC, anon, authenticated;
