@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import prizeWinnerImg from "@/assets/prize-winner.jpg";
 
 
 
@@ -40,35 +41,41 @@ const PrizePopup = () => {
           onClick={() => setOpen(false)}
         >
           <motion.div
-            className="paper-card w-full max-w-sm p-7 text-center"
+            className="paper-card w-full max-w-sm overflow-hidden p-0 text-center"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ type: "spring", damping: 24, stiffness: 260 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="paper-eyebrow">Welcome Prize</p>
-            <p className="mt-4 font-display text-5xl text-foreground">
-              ${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-            </p>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Your prize has been added to your wallet. It stays active for {hours} hours.
-            </p>
-            <button
-              className="btn-ink mt-6 h-12 w-full text-sm font-semibold"
-              onClick={() => {
-                setOpen(false);
-                navigate({ to: "/wallet" });
-              }}
-            >
-              Open Wallet
-            </button>
-            <button
-              className="mt-3 w-full py-2 text-xs text-muted-foreground"
-              onClick={() => setOpen(false)}
-            >
-              Later
-            </button>
+            <img
+              src={prizeWinnerImg}
+              alt="$9,999 — You're the winner"
+              className="w-full"
+              width={1024}
+              height={1024}
+            />
+            <div className="p-7 pt-5">
+              <p className="paper-eyebrow">Welcome Prize</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Your ${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} prize has been added to your wallet. It stays active for {hours} hours.
+              </p>
+              <button
+                className="btn-ink mt-6 h-12 w-full text-sm font-semibold"
+                onClick={() => {
+                  setOpen(false);
+                  navigate({ to: "/wallet" });
+                }}
+              >
+                Open Wallet
+              </button>
+              <button
+                className="mt-3 w-full py-2 text-xs text-muted-foreground"
+                onClick={() => setOpen(false)}
+              >
+                Later
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
