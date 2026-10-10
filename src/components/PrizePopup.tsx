@@ -3,13 +3,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
 
-const SEEN_KEY = "nova_prize_popup_seen";
+
 
 const PrizePopup = () => {
   const { user } = useApp();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const amount = Number(user.rewardBalance ?? 0);
+  const amount = Number(user.rewardBalance ?? 0) > 0 ? Number(user.rewardBalance) : 9999;
 
   // Show once on every app open (after the profile loads), and on demand.
   const [shown, setShown] = useState(false);
