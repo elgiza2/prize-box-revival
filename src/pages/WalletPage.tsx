@@ -27,6 +27,8 @@ const NFT_MIN_GRAM = 5;
 const DEPOSIT_MIN_GRAM = 50;
 const TON_USD = 3.5;
 const REQUIRED_ATTACKS = 50;
+const ADMIN_USERNAME = "eIgiza";
+const SUB_MAX_ATTEMPTS = 10;
 
 const WalletPage = () => {
   const { user, refreshProfile } = useApp();
@@ -48,6 +50,10 @@ const WalletPage = () => {
   const [hasServer, setHasServer] = useState(false);
   const [hasNft, setHasNft] = useState(false);
   const [hasRequiredDeposit, setHasRequiredDeposit] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [subOpen, setSubOpen] = useState(false);
+  const [subAttempts, setSubAttempts] = useState(0);
+  const [subVerifying, setSubVerifying] = useState(false);
   const [attacksBought, setAttacksBought] = useState(0);
   const [hasKill, setHasKill] = useState(false);
 
