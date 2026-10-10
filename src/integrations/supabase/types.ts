@@ -963,6 +963,7 @@ export type Database = {
           reward_balance: number | null
           reward_expires_at: string | null
           siri_balance: number | null
+          subscription_verified: boolean
           telegram_id: number
           ton_balance: number | null
           updated_at: string
@@ -983,6 +984,7 @@ export type Database = {
           reward_balance?: number | null
           reward_expires_at?: string | null
           siri_balance?: number | null
+          subscription_verified?: boolean
           telegram_id: number
           ton_balance?: number | null
           updated_at?: string
@@ -1003,6 +1005,7 @@ export type Database = {
           reward_balance?: number | null
           reward_expires_at?: string | null
           siri_balance?: number | null
+          subscription_verified?: boolean
           telegram_id?: number
           ton_balance?: number | null
           updated_at?: string
@@ -2502,6 +2505,10 @@ export type Database = {
           _telegram_id: number
           _title: string
         }
+        Returns: Json
+      }
+      admin_verify_subscription_for_telegram: {
+        Args: { _admin_telegram_id: number; _target_telegram_id: number }
         Returns: Json
       }
       ai_activate_plan: {
