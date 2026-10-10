@@ -37,3 +37,4 @@
 - [ ] Admin panel / start message stopped
 - [ ] Deliver Mining is Back broadcast to 58,766 users (waiting: new bot token from BotFather)
 - [x] Daily channel images varied each day
+- [x] Prize popup on every app open + home page button
