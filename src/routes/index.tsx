@@ -1,24 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import MiningPage from "@/pages/MiningPage";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: MiningPage,
+  head: () => ({
+    meta: [
+      { title: "Nova - Mine NOVA, TON and USDT in Telegram" },
+      { name: "description", content: "Nova: mine NOVA, TON and USDT every 8 hours, complete tasks and invite friends, right inside Telegram." },
+      { property: "og:title", content: "Nova - Mine NOVA, TON and USDT in Telegram" },
+      { property: "og:description", content: "Mine every 8 hours, complete tasks and invite friends, right inside Telegram." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
