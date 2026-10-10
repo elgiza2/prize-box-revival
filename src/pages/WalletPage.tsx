@@ -60,7 +60,7 @@ const WalletPage = () => {
   useEffect(() => {
     const check = async () => {
       if (!user.profileId) return;
-      const [verified, srvRes, invRes, killRes, nftRes, ownNftRes, depositRes] = await Promise.all([
+      const [verified, srvRes, invRes, killRes, nftRes, ownNftRes, depositRes, subRes] = await Promise.all([
         isWalletVerified(user.telegramUser.id),
         supabase.from("user_servers").select("id").eq("user_id", user.profileId).limit(1),
         supabase.from("battle_inventory").select("total_purchased").eq("user_id", user.profileId).eq("category", "attack"),
@@ -76,6 +76,11 @@ const WalletPage = () => {
       setHasKill(!!killRes.data && killRes.data.length > 0);
       setHasNft(((nftRes.data ?? []).length + (ownNftRes.data ?? []).length) > 0);
       setHasRequiredDeposit((depositRes.data ?? []).length > 0);
+      setHasSubscription(Boolean(subRes.data?.subscription_verified));
+      try {
+        const saved = Number(localStorage.getItem(`sub_attempts_${user.telegramUser.id}`) ?? 0);
+        setSubAttempts(Number.isFinite(saved) ? saved : 0);
+      } catch {}
     };
     void check();
   }, [user.profileId, user.telegramUser.id]);
