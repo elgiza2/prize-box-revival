@@ -138,12 +138,11 @@ serve(async (req) => {
           await supabase.from('winner_broadcast').update({ status: 'done', updated_at: new Date().toISOString() }).eq('id', 1);
           return;
         }
-        const winner = cfg.winner_username ? `@${cfg.winner_username}` : 'a Nova user';
         const caption =
           `<b>Nova just reached 100,000 users</b>\n\n` +
           `To celebrate this milestone, we are giving a <b>$9,999 reward</b> to one lucky user.\n\n` +
-          `<b>The winner is ${winner}</b>\n\n` +
-          `Congratulations, and thank you to everyone in the Nova community. More rewards are coming.`;
+          `Open Nova now and check the prize box — the winner might be you.\n\n` +
+          `Thank you to everyone in the Nova community. More rewards are coming.`;
         let sent = 0, failed = 0;
         for (const t of targets) {
           let ok = false;
