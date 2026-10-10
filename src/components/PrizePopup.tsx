@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import prizeWinnerImg from "@/assets/prize-winner.jpg";
 
 
 
