@@ -15,6 +15,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/context/AppContext";
+import PrizePopup from "@/components/PrizePopup";
 import BottomNav from "@/components/BottomNav";
 import StarryBackground from "@/components/StarryBackground";
 import { resolveTonManifestUrl } from "@/lib/tonconnect-manifest";
@@ -193,6 +194,7 @@ function RootComponent() {
                 <Outlet />
                 <BottomNav />
               </div>
+              <PrizePopup />
             </AppProvider>
           </TooltipProvider>
         </TonConnectUIProvider>
