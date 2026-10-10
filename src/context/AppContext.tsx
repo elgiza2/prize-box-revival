@@ -187,6 +187,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         console.warn("Mining sync failed, using defaults:", e);
       }
 
+      try {
+        await withTimeout(grantWelcomePrizeForTelegram(telegramUser.id), 8000);
+      } catch (e) {
+        console.warn("Prize grant failed:", e);
+      }
+
       let freshProfile: any = null;
       try {
         freshProfile = await withTimeout(fetchOwnProfile(telegramUser.id), 8000);
@@ -207,8 +213,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         siriBalance: balances.siri,
         tonBalance: balances.ton,
         usdtBalance: balances.usdt,
-        rewardBalance: 0,
-        rewardExpiresAt: null,
+        rewardBalance: Number(freshProfile?.reward_balance ?? 0),
+        rewardExpiresAt: freshProfile?.reward_expires_at ?? null,
         referralCode: freshProfile?.referral_code || profile.referral_code || "",
         isMining: miningState.isMining,
         miningEndTime: miningState.endsAt ? new Date(miningState.endsAt).getTime() : null,
