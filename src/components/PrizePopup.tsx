@@ -52,7 +52,7 @@ const PrizePopup = () => {
               src={prizeWinnerImg}
               alt="$9,999 — You're the winner"
               className="w-full"
-              width={1024}
+              width={1280}
               height={1024}
             />
             <div className="p-7 pt-5">
