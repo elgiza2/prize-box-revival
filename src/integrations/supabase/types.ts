@@ -2337,6 +2337,60 @@ export type Database = {
           },
         ]
       }
+      winner_broadcast: {
+        Row: {
+          created_at: string
+          failed: number
+          id: number
+          image_url: string
+          sent: number
+          status: string
+          updated_at: string
+          winner_profile_id: string | null
+          winner_username: string | null
+        }
+        Insert: {
+          created_at?: string
+          failed?: number
+          id?: number
+          image_url: string
+          sent?: number
+          status?: string
+          updated_at?: string
+          winner_profile_id?: string | null
+          winner_username?: string | null
+        }
+        Update: {
+          created_at?: string
+          failed?: number
+          id?: number
+          image_url?: string
+          sent?: number
+          status?: string
+          updated_at?: string
+          winner_profile_id?: string | null
+          winner_username?: string | null
+        }
+        Relationships: []
+      }
+      winner_broadcast_log: {
+        Row: {
+          delivered: boolean
+          profile_id: string
+          sent_at: string
+        }
+        Insert: {
+          delivered: boolean
+          profile_id: string
+          sent_at?: string
+        }
+        Update: {
+          delivered?: boolean
+          profile_id?: string
+          sent_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
