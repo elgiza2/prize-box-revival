@@ -1,7 +1,11 @@
--- Disable the first Gift Kombat task (Win 100 battles) per owner request.
+-- Owner request: re-enable Win 100 battles, disable the shop purchase task.
+UPDATE public.tasks
+SET is_active = true
+WHERE verification_type = 'gift_kombat_wins_100';
+
 UPDATE public.tasks
 SET is_active = false
-WHERE verification_type = 'gift_kombat_wins_100';
+WHERE verification_type = 'gift_kombat_shop_purchase';
 
 -- Megsy monthly subscription task: server-verified only, 1 TON reward.
 INSERT INTO public.tasks (
