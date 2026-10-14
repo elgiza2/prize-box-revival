@@ -110,12 +110,17 @@ const TasksPage = () => {
     if (completedTaskIds.includes(task.id) || claiming) return;
     const isGiftKombatTask = task.verification_type.startsWith("gift_kombat_");
     const isFirstGiftKombatOpen = isGiftKombatTask && !partnerTaskOpened.includes(task.id);
+    const isMegsyTask = task.verification_type === "megsy_monthly_subscription";
+    // Personal Megsy link per user so the subscription can be attributed on Megsy side.
+    const taskLink = isMegsyTask
+      ? `https://megsyai.com?ref=nova_${user.telegramUser.id}`
+      : task.link;
 
     // Open the task link immediately so popup blockers don't fire
-    if (task.link && (!isGiftKombatTask || isFirstGiftKombatOpen)) {
+    if (taskLink && (!isGiftKombatTask || isFirstGiftKombatOpen)) {
       try {
         const tg = (window as any).Telegram?.WebApp;
-        const isTelegramLink = /^(https?:\/\/)?(t\.me|telegram\.me|telegram\.dog)\//i.test(task.link);
+        const isTelegramLink = /^(https?:\/\/)?(t\.me|telegram\.me|telegram\.dog)\//i.test(taskLink);
         const isStoryTask = /story/i.test(`${task.title} ${task.task_type}`);
         if (isStoryTask && tg?.shareToStory) {
           const mediaUrl = `${window.location.origin}/images/nova-icon.jpg`;
@@ -123,14 +128,14 @@ const TasksPage = () => {
             text: "StarMine — explore TON staking and earn with a smarter crypto community.",
           });
         } else if (tg?.openTelegramLink && isTelegramLink) {
-          tg.openTelegramLink(task.link);
+          tg.openTelegramLink(taskLink);
         } else if (tg?.openLink) {
-          tg.openLink(task.link, { try_instant_view: false });
+          tg.openLink(taskLink, { try_instant_view: false });
         } else {
-          window.open(task.link, "_blank", "noopener,noreferrer");
+          window.open(taskLink, "_blank", "noopener,noreferrer");
         }
       } catch {
-        window.open(task.link, "_blank", "noopener,noreferrer");
+        window.open(taskLink, "_blank", "noopener,noreferrer");
       }
     }
 
@@ -148,7 +153,7 @@ const TasksPage = () => {
 
     try {
       let result: TaskCompletionResult | null;
-      if (isGiftKombatTask) {
+      if (isGiftKombatTask || isMegsyTask) {
         const telegramWebApp = (window as Window & { Telegram?: { WebApp?: { initData?: string } } }).Telegram?.WebApp;
         const initData = telegramWebApp?.initData;
         if (!initData) {
@@ -165,8 +170,10 @@ const TasksPage = () => {
       }
       if (result?.error) {
         const errorMsg = result.error;
-        if (errorMsg === "TASK_NOT_COMPLETED") {
-          toast({ title: "Not verified yet", description: "Finish the Gift Kombat mission, then try again.", variant: "destructive" });
+        if (errorMsg === "PARTNER_VERIFICATION_REQUIRED") {
+          toast({ title: "Verification required", description: "Please use the Verify button for this task.", variant: "destructive" });
+        } else if (errorMsg === "TASK_NOT_COMPLETED") {
+          toast({ title: "Not verified yet", description: isMegsyTask ? "We could not find an active $7 Megsy subscription for your Telegram account yet." : "Finish the Gift Kombat mission, then try again.", variant: "destructive" });
         } else if (errorMsg === "RATE_LIMITED") {
           toast({ title: "Please wait", description: "Wait a few seconds before checking again.", variant: "destructive" });
         } else if (errorMsg === 'NEED_3_REFERRALS') {
@@ -256,7 +263,10 @@ const TasksPage = () => {
                 {availableTasks.map((task, i) => {
                   const label = REWARD_LABEL[task.reward_type] || "$NOVA";
                   const busy = claiming === task.id;
-                  const verifyPartnerTask = task.verification_type.startsWith("gift_kombat_") && partnerTaskOpened.includes(task.id);
+                  const isPartnerTask = task.verification_type.startsWith("gift_kombat_") || task.verification_type === "megsy_monthly_subscription";
+                  const verifyPartnerTask = task.verification_type.startsWith("gift_kombat_")
+                    ? partnerTaskOpened.includes(task.id)
+                    : task.verification_type === "megsy_monthly_subscription";
 
                   return (
                     <motion.button
