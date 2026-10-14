@@ -6,7 +6,7 @@ const corsHeaders = {
 
 // Partner checks for Nova tasks. Response contract matches the partner style:
 // {"success":true} or {"success":false} — no sensitive data is ever returned.
-const CHECKS = ["profile-exists", "mining-1-claimed", "staking-5-ton", "nft-1-owned", "megsy-monthly", "nova-1000"] as const;
+const CHECKS = ["profile-exists", "mining-1-claimed", "staking-5-ton", "nft-1-owned", "megsy-monthly", "megsy-registered", "nova-1000"] as const;
 type Check = (typeof CHECKS)[number];
 
 const MEGSY_CHECK_URL = "https://qdnqxjzjecaieuavagvq.supabase.co/functions/v1/check-megsy-subscription";
@@ -128,6 +128,27 @@ Deno.serve(async (req) => {
     }
 
     // check === "megsy-monthly": proxy to the Megsy subscription verifier.
+    if (check === "megsy-registered") {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        let ok = false;
+        try {
+          const res = await fetch(`${MEGSY_CHECK_URL}?tg_user_id=${tgUserId}&mode=registered`, {
+            headers: { Accept: "application/json" },
+            signal: controller.signal,
+          });
+          const body = await res.json().catch(() => null);
+          ok = res.ok && !!body && (body as { success?: unknown }).success === true;
+        } finally {
+          clearTimeout(timeout);
+        }
+        return json({ success: ok });
+      } catch {
+        return json({ success: false });
+      }
+    }
+
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
