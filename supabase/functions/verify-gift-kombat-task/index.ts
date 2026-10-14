@@ -13,6 +13,9 @@ const TASKS: Record<string, { endpoint: string; params?: Record<string, string> 
     // The user confirmed the partner API threshold and campaign start date.
     params: { amount: "4.25", after_date: "2026-10-13" },
   },
+  megsy_monthly_subscription: {
+    endpoint: "https://qdnqxjzjecaieuavagvq.supabase.co/functions/v1/check-megsy-subscription",
+  },
 };
 const MAX_INIT_DATA_AGE_SECONDS = 24 * 60 * 60;
 const encoder = new TextEncoder();
