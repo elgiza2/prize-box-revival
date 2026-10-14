@@ -26,6 +26,16 @@ interface Task {
   image_url: string | null;
 }
 
+interface TaskCompletionResult {
+  success?: boolean;
+  error?: string;
+  current?: number;
+  alreadyCompleted?: boolean;
+  rewardAmount?: number;
+  rewardType?: string;
+  balances?: { siri: number; ton: number; usdt: number };
+}
+
 const REWARD_LABEL: Record<string, string> = {
   ton: "Gram",
   usdt: "USDT",
@@ -49,6 +59,13 @@ const TasksPage = () => {
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState<string | null>(null);
+  const [partnerTaskOpened, setPartnerTaskOpened] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = JSON.parse(window.sessionStorage.getItem("gift-kombat-opened-tasks") || "[]");
+      return Array.isArray(saved) ? saved.filter((id: unknown) => typeof id === "string") : [];
+    } catch { return []; }
+  });
   const [referralSummary, setReferralSummary] = useState<ReferralSummary>({ count: 0, ton_earned: 0, users: [], rewards: [] });
 
   const referralLink = `https://t.me/Noveaibot/App?startapp=${user.referralCode}`;
@@ -91,9 +108,11 @@ const TasksPage = () => {
 
   const handleTask = async (task: Task) => {
     if (completedTaskIds.includes(task.id) || claiming) return;
+    const isGiftKombatTask = task.verification_type.startsWith("gift_kombat_");
+    const isFirstGiftKombatOpen = isGiftKombatTask && !partnerTaskOpened.includes(task.id);
 
     // Open the task link immediately so popup blockers don't fire
-    if (task.link) {
+    if (task.link && (!isGiftKombatTask || isFirstGiftKombatOpen)) {
       try {
         const tg = (window as any).Telegram?.WebApp;
         const isTelegramLink = /^(https?:\/\/)?(t\.me|telegram\.me|telegram\.dog)\//i.test(task.link);
@@ -115,16 +134,45 @@ const TasksPage = () => {
       }
     }
 
+    if (isFirstGiftKombatOpen) {
+      setPartnerTaskOpened((prev) => {
+        const next = prev.includes(task.id) ? prev : [...prev, task.id];
+        try { window.sessionStorage.setItem("gift-kombat-opened-tasks", JSON.stringify(next)); } catch { /* ignore */ }
+        return next;
+      });
+      toast({ title: "Gift Kombat opened", description: "Complete the mission, return here, and tap Verify." });
+      return;
+    }
+
     setClaiming(task.id);
 
     try {
-      const result = await completeTaskForTelegram(user.telegramUser.id, task.id);
-      if ((result as any).error) {
-        const errorMsg = (result as any).error;
-        if (errorMsg === 'NEED_3_REFERRALS') {
-          toast({ title: "Not yet!", description: `You need 3 referrals (current: ${(result as any).current})`, variant: "destructive" });
+      let result: TaskCompletionResult | null;
+      if (isGiftKombatTask) {
+        const telegramWebApp = (window as Window & { Telegram?: { WebApp?: { initData?: string } } }).Telegram?.WebApp;
+        const initData = telegramWebApp?.initData;
+        if (!initData) {
+          toast({ title: "Open in Telegram", description: "Verification requires a valid Telegram session.", variant: "destructive" });
+          return;
+        }
+        const { data, error } = await supabase.functions.invoke("verify-gift-kombat-task", {
+          body: { initData, taskId: task.id },
+        });
+        if (error) throw error;
+        result = data as TaskCompletionResult | null;
+      } else {
+        result = await completeTaskForTelegram(user.telegramUser.id, task.id);
+      }
+      if (result?.error) {
+        const errorMsg = result.error;
+        if (errorMsg === "TASK_NOT_COMPLETED") {
+          toast({ title: "Not verified yet", description: "Finish the Gift Kombat mission, then try again.", variant: "destructive" });
+        } else if (errorMsg === "RATE_LIMITED") {
+          toast({ title: "Please wait", description: "Wait a few seconds before checking again.", variant: "destructive" });
+        } else if (errorMsg === 'NEED_3_REFERRALS') {
+          toast({ title: "Not yet!", description: `You need 3 referrals (current: ${result.current ?? 0})`, variant: "destructive" });
         } else if (errorMsg === 'NEED_3_MINING_SESSIONS') {
-          toast({ title: "Not yet!", description: `Complete 3 mining sessions (current: ${(result as any).current})`, variant: "destructive" });
+          toast({ title: "Not yet!", description: `Complete 3 mining sessions (current: ${result.current ?? 0})`, variant: "destructive" });
         } else if (errorMsg === 'NEED_SERVER_PURCHASE') {
           toast({ title: "Not yet!", description: "Buy a server first!", variant: "destructive" });
         } else if (errorMsg === 'NEED_MONSTER_KILL') {
@@ -134,16 +182,23 @@ const TasksPage = () => {
         }
         return;
       }
-      if (result.alreadyCompleted) return;
-
-      setCompletedTaskIds((prev) => [...prev, task.id]);
-      setUser((prev) => ({
+      if (!result?.success) {
+        toast({ title: "Task failed", description: "We could not verify this task right now.", variant: "destructive" });
+        return;
+      }
+      const balances = result.balances;
+      if (balances) setUser((prev) => ({
         ...prev,
-        siriBalance: result.balances.siri,
-        tonBalance: result.balances.ton,
-        usdtBalance: result.balances.usdt,
+        siriBalance: balances.siri,
+        tonBalance: balances.ton,
+        usdtBalance: balances.usdt,
       }));
-      toast({ title: "Task Completed!", description: `+${result.rewardAmount} ${result.rewardType.toUpperCase()}` });
+      setCompletedTaskIds((prev) => prev.includes(task.id) ? prev : [...prev, task.id]);
+      if (result.alreadyCompleted) {
+        toast({ title: "Task already completed", description: "Your balances have been refreshed." });
+        return;
+      }
+      toast({ title: "Task Completed!", description: `+${result.rewardAmount ?? 0} ${(result.rewardType ?? "").toUpperCase()}` });
     } catch {
       toast({ title: "Task failed", variant: "destructive" });
     } finally {
@@ -201,6 +256,7 @@ const TasksPage = () => {
                 {availableTasks.map((task, i) => {
                   const label = REWARD_LABEL[task.reward_type] || "$NOVA";
                   const busy = claiming === task.id;
+                  const verifyPartnerTask = task.verification_type.startsWith("gift_kombat_") && partnerTaskOpened.includes(task.id);
 
                   return (
                     <motion.button
@@ -236,7 +292,7 @@ const TasksPage = () => {
                       </div>
 
                       <span className="flex h-9 min-w-[56px] shrink-0 items-center justify-center rounded-full bg-action px-4 text-[11px] font-bold uppercase tracking-widest text-action-foreground">
-                        {busy ? "…" : "Go"}
+                        {busy ? "…" : verifyPartnerTask ? "Verify" : "Go"}
                       </span>
                     </motion.button>
                   );
