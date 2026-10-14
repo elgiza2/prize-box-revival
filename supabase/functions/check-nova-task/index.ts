@@ -6,7 +6,7 @@ const corsHeaders = {
 
 // Partner checks for Nova tasks. Response contract matches the partner style:
 // {"success":true} or {"success":false} — no sensitive data is ever returned.
-const CHECKS = ["profile-exists", "mining-1-claimed", "staking-5-ton", "nft-1-owned", "megsy-monthly"] as const;
+const CHECKS = ["profile-exists", "mining-1-claimed", "staking-5-ton", "nft-1-owned", "megsy-monthly", "nova-1000"] as const;
 type Check = (typeof CHECKS)[number];
 
 const MEGSY_CHECK_URL = "https://qdnqxjzjecaieuavagvq.supabase.co/functions/v1/check-megsy-subscription";
@@ -112,6 +112,19 @@ Deno.serve(async (req) => {
         return json({ success: false });
       }
       return json({ success: (count ?? 0) >= 1 });
+    }
+
+    if (check === "nova-1000") {
+      const { data: balance, error } = await admin
+        .from("profiles")
+        .select("siri_balance")
+        .eq("id", profile.id)
+        .maybeSingle();
+      if (error) {
+        console.error("check-nova-task balance lookup failed", error.message);
+        return json({ success: false });
+      }
+      return json({ success: Number(balance?.siri_balance ?? 0) >= 1000 });
     }
 
     // check === "megsy-monthly": proxy to the Megsy subscription verifier.
