@@ -74,7 +74,7 @@ serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
   const telegramApi = `https://api.telegram.org/bot${botToken}`;
-  const startWork = (async () => {
+  const registerUser = async () => {
     const lastName = message.from?.last_name || "";
     const username = message.from?.username || "";
     const args = message.text.split(" ");
@@ -113,18 +113,29 @@ serve(async (req) => {
     } catch (error) {
       console.error("Start registration failed:", error);
     }
+  };
 
+  const sendWelcome = async () => {
     let imageUrl = DEFAULT_WELCOME_IMAGE;
+    let configTimer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const { data } = await supabase
-        .from("telegram_admins")
-        .select("welcome_image_url")
-        .not("welcome_image_url", "is", null)
-        .neq("welcome_image_url", "")
-        .limit(1);
-      imageUrl = data?.[0]?.welcome_image_url || DEFAULT_WELCOME_IMAGE;
+      const lookup = await Promise.race([
+        supabase
+          .from("telegram_admins")
+          .select("welcome_image_url")
+          .not("welcome_image_url", "is", null)
+          .neq("welcome_image_url", "")
+          .limit(1),
+        new Promise<null>((resolve) => {
+          configTimer = setTimeout(() => resolve(null), 2500);
+        }),
+      ]);
+      if (configTimer) clearTimeout(configTimer);
+      if (lookup) imageUrl = lookup.data?.[0]?.welcome_image_url || DEFAULT_WELCOME_IMAGE;
+      else console.warn("Welcome image lookup timed out; using the default image");
     } catch (error) {
-      console.error("Welcome image lookup failed:", error);
+      if (configTimer) clearTimeout(configTimer);
+      console.error("Welcome image lookup failed; using the default image:", error);
     }
 
     const text =
@@ -139,6 +150,7 @@ serve(async (req) => {
       const response = await fetch(`${telegramApi}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(8000),
         body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML", reply_markup: replyMarkup }),
       });
       const result = await response.json().catch(() => null);
@@ -152,6 +164,7 @@ serve(async (req) => {
       const response = await fetch(`${telegramApi}/sendPhoto`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(8000),
         body: JSON.stringify({
           chat_id: chatId,
           photo: imageUrl,
@@ -166,11 +179,20 @@ serve(async (req) => {
     } catch (error) {
       console.error("Telegram sendPhoto request failed:", error);
     }
-    if (!photoSent) await sendText();
-  })();
+    if (!photoSent) {
+      await sendText();
+      console.info("Telegram /start welcome delivered", { method: "text" });
+    } else {
+      console.info("Telegram /start welcome delivered", { method: "photo" });
+    }
+  };
+
+  const registrationTask = registerUser().catch((error) => console.error("Start registration task failed:", error));
+  const welcomeTask = sendWelcome().catch((error) => console.error("Start welcome task failed:", error));
+  const backgroundWork = Promise.all([registrationTask, welcomeTask]);
 
   // The Telegram webhook ACK must not wait for database or Telegram API calls.
-  EdgeRuntime.waitUntil(startWork.catch((error) => console.error("Start welcome task failed:", error)));
+  EdgeRuntime.waitUntil(backgroundWork);
   return new Response(JSON.stringify({ ok: true }), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
