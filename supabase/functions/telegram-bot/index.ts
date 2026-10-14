@@ -578,96 +578,76 @@ serve(async (req) => {
 
 
       if (message.text?.startsWith('/start')) {
-        const lastName = message.from?.last_name || '';
-        const username = message.from?.username || '';
-        const parts = message.text.split(' ');
-        const referralCode = parts.length > 1 ? parts[1] : null;
+        // Acknowledge Telegram immediately; profile writes and welcome delivery
+        // can otherwise exceed Telegram's webhook timeout and trigger retries.
+        const startWork = (async () => {
+          const lastName = message.from?.last_name || '';
+          const username = message.from?.username || '';
+          const parts = message.text.split(' ');
+          const referralCode = parts.length > 1 ? parts[1] : null;
 
-        // Register user - always try, handle duplicates gracefully
-        try {
-          const { data: existing } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('telegram_id', userId)
-            .limit(1);
+          try {
+            const { data: existing } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('telegram_id', userId)
+              .limit(1);
 
-          if (!existing || existing.length === 0) {
-            const newReferralCode = `SIRI${userId}${Date.now().toString(36)}`.toUpperCase();
-            
-            // Build deterministic UUID from telegram ID
-            const hex = Math.abs(Math.trunc(userId)).toString(16).padStart(32, '0').slice(-32);
-            const scopedUserId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
-            
-            let referredBy = null;
-            if (referralCode) {
-              const { data: referrer } = await supabase
-                .from('profiles')
-                .select('id')
-                .eq('referral_code', referralCode)
-                .limit(1);
-              if (referrer && referrer.length > 0) referredBy = referrer[0].id;
+            if (!existing || existing.length === 0) {
+              const newReferralCode = `SIRI${userId}${Date.now().toString(36)}`.toUpperCase();
+              const hex = Math.abs(Math.trunc(userId)).toString(16).padStart(32, '0').slice(-32);
+              const scopedUserId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+
+              let referredBy = null;
+              if (referralCode) {
+                const { data: referrer } = await supabase
+                  .from('profiles')
+                  .select('id')
+                  .eq('referral_code', referralCode)
+                  .limit(1);
+                if (referrer && referrer.length > 0) referredBy = referrer[0].id;
+              }
+
+              const { error: insertError } = await supabase.from('profiles').insert({
+                telegram_id: userId,
+                first_name: firstName,
+                last_name: lastName,
+                username,
+                referral_code: newReferralCode,
+                referred_by: referredBy,
+                user_id: scopedUserId,
+              });
+              if (insertError && insertError.code !== '23505') {
+                console.error('Profile insert error:', insertError);
+              }
             }
-
-            const { error: insertError } = await supabase.from('profiles').insert({
-              telegram_id: userId,
-              first_name: firstName,
-              last_name: lastName,
-              username: username,
-              referral_code: newReferralCode,
-              referred_by: referredBy,
-              user_id: scopedUserId,
-            });
-
-            if (insertError && insertError.code !== '23505') {
-              console.error("Profile insert error:", insertError);
-            }
+          } catch (regError) {
+            console.error('Registration error:', regError);
           }
-        } catch (regError) {
-          console.error("Registration error:", regError);
-          // Don't block the welcome message
-        }
 
-        // Get welcome image from admin config (falls back to default Nova banner)
-        const DEFAULT_WELCOME_IMAGE = 'https://iqosbhbbyzqozfgpthyj.supabase.co/storage/v1/object/public/ads-tasks/nova/welcome-start.jpg';
-        let welcomeImageUrl = DEFAULT_WELCOME_IMAGE;
-        try {
-          const { data: adminConfig } = await supabase
-            .from('telegram_admins')
-            .select('welcome_image_url')
-            .not('welcome_image_url', 'is', null)
-            .neq('welcome_image_url', '')
-            .limit(1);
-          welcomeImageUrl = adminConfig?.[0]?.welcome_image_url || DEFAULT_WELCOME_IMAGE;
-        } catch (e) {
-          console.error("Failed to get welcome image:", e);
-        }
+          const DEFAULT_WELCOME_IMAGE = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663964615372/pUhqRwCqipPIcFIm.png';
+          let welcomeImageUrl = DEFAULT_WELCOME_IMAGE;
+          try {
+            const { data: adminConfig } = await supabase
+              .from('telegram_admins')
+              .select('welcome_image_url')
+              .not('welcome_image_url', 'is', null)
+              .neq('welcome_image_url', '')
+              .limit(1);
+            welcomeImageUrl = adminConfig?.[0]?.welcome_image_url || DEFAULT_WELCOME_IMAGE;
+          } catch (e) {
+            console.error('Failed to get welcome image:', e);
+          }
 
-        const welcomeText = `<b>Welcome to Nova</b>\n\nMine $NOVA, TON, and USDT every eight hours. Upgrade your mining capacity. Invite friends. Earn more. Simple. Powerful. Rewarding. Start today .`;
-
-
-        const welcomeMarkup = {
-          inline_keyboard: [
-            [{ text: 'Open Nova AI', url: APP_URL }],
-            [{ text: 'Join Community', url: 'https://t.me/noveall' }],
-          ]
-        };
-
-
-        try {
-          if (welcomeImageUrl) {
-            await fetch(`${BASE_URL}/sendPhoto`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: chatId,
-                photo: welcomeImageUrl,
-                caption: welcomeText,
-                parse_mode: 'HTML',
-                reply_markup: welcomeMarkup,
-              }),
-            });
-          } else {
-            await fetch(`${BASE_URL}/sendMessage`, {
+          const welcomeText = '<b>Welcome to Nova</b>\n\nMine $NOVA, TON, and USDT every eight hours. Upgrade your mining capacity. Invite friends. Earn more. Simple. Powerful. Rewarding. Start today.';
+          const welcomeMarkup = {
+            inline_keyboard: [
+              [{ text: 'Open Nova AI', url: APP_URL }],
+              [{ text: 'Join Community', url: 'https://t.me/noveall' }],
+            ],
+          };
+          const sendTextWelcome = async () => {
+            const response = await fetch(`${BASE_URL}/sendMessage`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -677,14 +657,46 @@ serve(async (req) => {
                 reply_markup: welcomeMarkup,
               }),
             });
+            const result = await response.json().catch(() => null);
+            if (!response.ok || !result?.ok) {
+              throw new Error(result?.description || `sendMessage HTTP ${response.status}`);
+            }
+          };
+
+          if (welcomeImageUrl) {
+            let photoSent = false;
+            try {
+              const response = await fetch(`${BASE_URL}/sendPhoto`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  chat_id: chatId,
+                  photo: welcomeImageUrl,
+                  caption: welcomeText,
+                  parse_mode: 'HTML',
+                  reply_markup: welcomeMarkup,
+                }),
+              });
+              const result = await response.json().catch(() => null);
+              photoSent = response.ok && result?.ok === true;
+              if (!photoSent) {
+                console.error('Telegram sendPhoto rejected welcome:', result?.description || response.status);
+              }
+            } catch (sendError) {
+              console.error('Telegram sendPhoto request failed:', sendError);
+            }
+            if (!photoSent) await sendTextWelcome();
+          } else {
+            await sendTextWelcome();
           }
-        } catch (sendError) {
-          console.error("Failed to send welcome:", sendError);
-        }
+        })();
 
-
-        return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-
+        EdgeRuntime.waitUntil(
+          startWork.catch((error) => console.error('Start processing failed:', error)),
+        );
+        return new Response(JSON.stringify({ ok: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
     }
 
