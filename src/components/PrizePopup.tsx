@@ -7,6 +7,8 @@ import prizeWinnerImg from "@/assets/prize-winner.jpg";
 
 
 const PrizePopup = () => {
+  // PRIZE TEMPORARILY DISABLED — remove this early return to re-enable.
+  return null;
   const { user } = useApp();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);

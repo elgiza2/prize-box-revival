@@ -188,11 +188,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         console.warn("Mining sync failed, using defaults:", e);
       }
 
-      try {
-        await withTimeout(grantWelcomePrizeForTelegram(telegramUser.id), 8000);
-      } catch (e) {
-        console.warn("Prize grant failed:", e);
-      }
+      // PRIZE TEMPORARILY DISABLED — uncomment to re-enable auto-grant on login.
+      // try {
+      //   await withTimeout(grantWelcomePrizeForTelegram(telegramUser.id), 8000);
+      // } catch (e) {
+      //   console.warn("Prize grant failed:", e);
+      // }
 
       let freshProfile: any = null;
       try {
