@@ -7,8 +7,6 @@ import prizeWinnerImg from "@/assets/prize-winner.jpg";
 
 
 const PrizePopup = () => {
-  // PRIZE TEMPORARILY DISABLED — remove this early return to re-enable.
-  return null;
   const { user } = useApp();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -31,6 +29,9 @@ const PrizePopup = () => {
   const hours = user.rewardExpiresAt
     ? Math.max(0, Math.round((new Date(user.rewardExpiresAt).getTime() - Date.now()) / 3600000))
     : 48;
+
+  // PRIZE TEMPORARILY DISABLED — remove this early return to re-enable.
+  return null;
 
   return (
     <AnimatePresence>
