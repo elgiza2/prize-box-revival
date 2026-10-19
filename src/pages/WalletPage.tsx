@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase as typedSupabase } from "@/integrations/supabase/client";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const supabase = typedSupabase as any;
-import { Power, Lock, ArrowDownToLine, ArrowUpFromLine, ShieldCheck, Copy } from "lucide-react";
+import { Power, ArrowDownToLine, ArrowUpFromLine, ShieldCheck, Copy } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { PaymentError, sendTonPayment, TON_FEE_BUFFER } from "@/lib/ton";
 import { creditDepositWithIntent, isWalletVerified, requestWithdrawal, verifyTonOnChain, verifyWalletWithIntent } from "@/lib/game-api";
@@ -372,11 +372,16 @@ const WalletPage = () => {
       >
         {Number(user.rewardBalance ?? 0) > 0 && (
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
-              <Lock className="h-4 w-4" />
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card">
+              <img
+                src={TON_ICON}
+                alt="Gram"
+                className="h-full w-full rounded-full object-cover"
+                loading="lazy"
+              />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-foreground">Locked USDT</p>
+              <p className="text-sm font-semibold text-foreground">Gram</p>
               <p className="text-[11px] text-muted-foreground">Prize reward</p>
             </div>
             <div className="text-right">

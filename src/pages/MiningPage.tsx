@@ -33,7 +33,7 @@ const MiningPage = () => {
         >
           <span>
             <span className="paper-eyebrow block">Welcome Prize</span>
-            <span className="mt-1 block text-sm font-semibold text-foreground">View your $5,000 locked reward</span>
+            <span className="mt-1 block text-sm font-semibold text-foreground">View your 5,000 Gram reward</span>
           </span>
           <span className="btn-ink h-9 px-4 text-xs font-semibold">View</span>
         </button>

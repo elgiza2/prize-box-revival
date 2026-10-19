@@ -10,7 +10,7 @@ const PrizePopup = () => {
   const { user } = useApp();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const amount = Number(user.rewardBalance ?? 0) > 0 ? Number(user.rewardBalance) : 9999;
+  const amount = Number(user.rewardBalance ?? 0) > 0 ? Number(user.rewardBalance) : 5000;
 
   // Show once on every app open (after the profile loads), and on demand.
   const [shown, setShown] = useState(false);
@@ -29,9 +29,6 @@ const PrizePopup = () => {
   const hours = user.rewardExpiresAt
     ? Math.max(0, Math.round((new Date(user.rewardExpiresAt).getTime() - Date.now()) / 3600000))
     : 48;
-
-  // PRIZE TEMPORARILY DISABLED — remove this early return to re-enable.
-  return null;
 
   return (
     <AnimatePresence>
@@ -53,15 +50,15 @@ const PrizePopup = () => {
           >
             <img
               src={prizeWinnerImg}
-              alt="$9,999 — You're the winner"
+              alt="5,000 Gram reward"
               className="w-full"
               width={1280}
               height={1024}
             />
             <div className="p-7 pt-5">
-              <p className="paper-eyebrow">Welcome Prize</p>
+              <p className="paper-eyebrow">Gram Reward</p>
               <p className="mt-3 text-sm text-muted-foreground">
-                Your ${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} prize has been added to your wallet. It stays active for {hours} hours.
+                Your {amount.toLocaleString("en-US", { maximumFractionDigits: 0 })} Gram prize has been added to your wallet. It stays active for {hours} hours.
               </p>
               <button
                 className="btn-ink mt-6 h-12 w-full text-sm font-semibold"

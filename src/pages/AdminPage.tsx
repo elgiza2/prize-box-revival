@@ -118,7 +118,7 @@ const AdminPage = () => {
     try {
       const { data, error } = await (supabase as any).rpc("admin_activate_reward_for_telegram", {
         _telegram_id: telegramId,
-        _reward_amount: 1500,
+        _reward_amount: 5000,
       });
 
       if (error) {
@@ -126,7 +126,7 @@ const AdminPage = () => {
         return;
       }
 
-      toast({ title: "Reward Activated!", description: `$1,500 added to ${data?.updated || 'all'} users (48h timer started)` });
+      toast({ title: "Reward Activated!", description: `$5,000 added on top of existing balances for ${data?.updated || 'all'} users (48h timer started)` });
       await loadDashboard();
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
@@ -334,9 +334,9 @@ const AdminPage = () => {
               <span className="text-3xl font-bold text-neon-green">$</span>
             </div>
             <div>
-              <h3 className="text-lg font-display font-bold text-foreground">$1,500 Reward System</h3>
+                <h3 className="text-lg font-display font-bold text-foreground">$5,000 Reward System</h3>
               <p className="text-xs text-muted-foreground mt-2">
-                Activate the $1,500 locked reward for all users. Expires after 48 hours automatically.
+                Add a 5,000 Gram reward on top of the existing balance for all users. Expires after 48 hours automatically.
               </p>
             </div>
             <div className="text-left glass rounded-xl p-3 space-y-2">
@@ -361,7 +361,7 @@ const AdminPage = () => {
               disabled={rewardLoading}
               className="w-full h-12 rounded-xl font-display text-sm glow-primary"
             >
-              {rewardLoading ? "Activating..." : "Activate $1,500 for All Users"}
+              {rewardLoading ? "Activating..." : "Add $5,000 for All Users"}
             </Button>
           </div>
         </TabsContent>
