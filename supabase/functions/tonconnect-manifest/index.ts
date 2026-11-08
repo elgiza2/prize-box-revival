@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 const DEFAULT_ORIGIN = "https://nova.megsyai.com";
-const ICON_URL = "https://nova.megsyai.com/images/nova-logo.png";
+const ICON_URL = "https://nova.megsyai.com/images/cl-icon.svg";
 
 const ALLOWED_HOST_SUFFIXES = [
   ".lovable.app",
@@ -43,7 +43,7 @@ Deno.serve((req) => {
 
   const manifest = {
     url: origin,
-    name: "Nova Coin",
+    name: "Clo Coin (CL)",
     iconUrl: ICON_URL,
     termsOfUseUrl: origin,
     privacyPolicyUrl: origin,

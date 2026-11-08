@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildNotification, totalVariants, type NotificationTopic } from "../_shared/notification-texts.ts";
 
-const APP_URL = "https://t.me/Noveaibot/App";
+const APP_URL = "https://nova.megsyai.com";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -139,10 +139,10 @@ serve(async (req) => {
           return;
         }
         const caption =
-          `<b>Welcome to Nova</b>\n\n` +
-          `Nova has now reached <b>300,000 users</b> — thank you for being part of our community.\n\n` +
+          `<b>Welcome to Clo</b>\n\n` +
+          `Clo has now reached <b>300,000 users</b> — thank you for being part of our community.\n\n` +
           `To celebrate, we are giving a <b>$9,999 reward</b> to one lucky user.\n\n` +
-          `Open Nova now and check the prize box — the winner might be you.`;
+          `Open Clo now and check the prize box — the winner might be you.`;
         let sent = 0, failed = 0;
         for (const t of targets) {
           let ok = false;
@@ -151,7 +151,7 @@ serve(async (req) => {
               method: 'POST', headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 chat_id: t.telegram_id, photo: cfg.image_url, caption, parse_mode: 'HTML',
-                reply_markup: { inline_keyboard: [[{ text: 'Open Nova', url: APP_URL }]] },
+                reply_markup: { inline_keyboard: [[{ text: '✨ Open Clo', url: APP_URL }]] },
               }),
             });
             const j = await r.json();
@@ -241,21 +241,21 @@ serve(async (req) => {
     const adminPanelText = async () => {
       const s = await adminStats();
       return (
-        `<b>Nova Admin Panel</b>\n\n` +
+        `<b>Clo Admin Panel</b>\n\n` +
         `Total users: ${s.users}\n` +
         `New users (24h): ${s.newUsers}\n` +
-        `Active Nova tasks: ${s.tasks}\n` +
+        `Active Clo tasks: ${s.tasks}\n` +
         `Pending withdrawals: ${s.pendingWithdrawals}\n\n` +
-        `Use the buttons below to manage Nova tasks.`
+        `Use the buttons below to manage Clo tasks.`
       );
     };
 
     const adminKeyboard = {
       inline_keyboard: [
-        [{ text: 'Add Nova task', callback_data: 'adm_add' }],
-        [{ text: 'Nova tasks', callback_data: 'adm_tasks' }],
-        [{ text: 'Delete all tasks', callback_data: 'adm_delall' }],
-        [{ text: 'Refresh stats', callback_data: 'adm_stats' }],
+        [{ text: '➕ Add Clo task', callback_data: 'adm_add' }],
+        [{ text: '📋 Clo tasks', callback_data: 'adm_tasks' }],
+        [{ text: '🗑 Delete all tasks', callback_data: 'adm_delall' }],
+        [{ text: '🔄 Refresh stats', callback_data: 'adm_stats' }],
       ],
     };
 
@@ -267,8 +267,8 @@ serve(async (req) => {
       const rows = data ?? [];
       if (rows.length === 0) {
         return {
-          text: '<b>Nova Tasks</b>\n\nNo tasks yet.',
-          markup: { inline_keyboard: [[{ text: 'Add Nova task', callback_data: 'adm_add' }]] },
+          text: '<b>Clo Tasks</b>\n\nNo tasks yet.',
+          markup: { inline_keyboard: [[{ text: '➕ Add Clo task', callback_data: 'adm_add' }]] },
         };
       }
       const text = rows
@@ -277,13 +277,13 @@ serve(async (req) => {
       const markup = {
         inline_keyboard: [
           ...rows.slice(0, 20).map((t: any, i: number) => [
-            { text: `Delete ${i + 1}`, callback_data: `adm_del:${t.id}` },
+            { text: `🗑 Delete ${i + 1}`, callback_data: `adm_del:${t.id}` },
           ]),
-          [{ text: 'Add Nova task', callback_data: 'adm_add' }],
-          [{ text: 'Delete all tasks', callback_data: 'adm_delall' }],
+          [{ text: '➕ Add Clo task', callback_data: 'adm_add' }],
+          [{ text: '🗑 Delete all tasks', callback_data: 'adm_delall' }],
         ],
       };
-      return { text: `<b>Nova Tasks</b>\n\n${text}`, markup };
+      return { text: `<b>Clo Tasks</b>\n\n${text}`, markup };
     };
 
     const cancelRow = [{ text: 'Cancel', callback_data: 'adm_cancel' }];
@@ -293,7 +293,7 @@ serve(async (req) => {
       `1. Name: ${d.title || '-'}\n` +
       `2. Link: ${d.link || (d.step === 'link' || d.step === 'title' ? '-' : 'none')}\n` +
       `3. Image: ${d.image ? 'added' : (d.step === 'image' || d.step === 'link' || d.step === 'title' ? '-' : 'none')}\n` +
-      `Reward: ${d.reward ?? '-'} ${(d.rewardType === 'siri' ? 'NOVA' : (d.rewardType || '')).toUpperCase()}`;
+      `Reward: ${d.reward ?? '-'} ${(d.rewardType === 'siri' ? 'CL' : (d.rewardType || '')).toUpperCase()}`;
 
     const askStep = async (chat: number, d: any) => {
       if (d.step === 'title') {
@@ -320,7 +320,7 @@ serve(async (req) => {
           reply_markup: {
             inline_keyboard: [
               [
-                { text: '$NOVA', callback_data: 'adm_type:siri' },
+                { text: 'CL', callback_data: 'adm_type:siri' },
                 { text: 'TON', callback_data: 'adm_type:ton' },
                 { text: 'USDT', callback_data: 'adm_type:usdt' },
               ],
@@ -423,7 +423,7 @@ serve(async (req) => {
       await clearDraft(tgId);
       await tg('sendMessage', {
         chat_id: chat,
-        text: error ? `Failed: ${error.message}` : `Nova task added: ${d.title} - ${d.reward} ${String(d.rewardType).toUpperCase()}`,
+        text: error ? `Failed: ${error.message}` : `Clo task added: ${d.title} - ${d.reward} ${d.rewardType === 'siri' ? 'CL' : String(d.rewardType).toUpperCase()}`,
         reply_markup: adminKeyboard,
       });
     };
@@ -639,11 +639,11 @@ serve(async (req) => {
             console.error('Failed to get welcome image:', e);
           }
 
-          const welcomeText = '<b>Welcome to Nova</b>\n\nMine $NOVA, TON, and USDT every eight hours. Upgrade your mining capacity. Invite friends. Earn more. Simple. Powerful. Rewarding. Start today.';
+          const welcomeText = '📱 <b>Welcome to Clo</b>\n\nMine CL, earn TON and USDT, complete missions, and invite friends to grow your balance.\n\n<a href=\"https://t.me/addemoji/TgAndroidIcons\">Get the Telegram Android Icons emoji pack</a>';
           const welcomeMarkup = {
             inline_keyboard: [
-              [{ text: 'Open Nova AI', url: APP_URL }],
-              [{ text: 'Join Community', url: 'https://t.me/noveall' }],
+              [{ text: '✨ Open Clo', url: APP_URL }],
+              [{ text: '🌐 Join Community', url: 'https://t.me/noveall' }],
             ],
           };
           const sendTextWelcome = async () => {
@@ -768,7 +768,7 @@ const CHANNEL_POSTS = [
 const ASTRO_SCENES = [
   "an astronaut drilling glowing purple crystals on a dark volcanic planet",
   "an astronaut floating beside a giant dark ringed planet, holding a glowing coin",
-  "two astronauts planting a NOVA flag on a black moon with a violet nebula behind",
+  "two astronauts planting a CLO flag on a black moon with a violet nebula behind",
   "an astronaut riding a small rover across a dark red desert planet under two moons",
   "an astronaut repairing a satellite in orbit above a deep indigo gas giant",
   "an astronaut sitting on a cliff edge looking at a dark planet eclipse with a purple halo",
@@ -801,7 +801,7 @@ async function generateDailyImage(supabase: any, title: string, _scene: string, 
   if (!key) return null;
   try {
     const scene = `an astronaut ${pickOne(ACTIONS)}, in ${pickOne(BACKDROPS)}`;
-    const prompt = `Wide 3:2 poster, ${pickOne(STYLES)}: ${scene}. Fresh unique composition, rich colors, dramatic lighting. On the left side, large clean bold white sans-serif text that reads exactly "${title}" and below it smaller text "NOVA". No other text, no logos, no watermark.`;
+    const prompt = `Wide 3:2 poster, ${pickOne(STYLES)}: ${scene}. Fresh unique composition, rich colors, dramatic lighting. On the left side, large clean bold white sans-serif text that reads exactly "${title}" and below it smaller text "CLO". No other text, no logos, no watermark.`;
     const r = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
@@ -892,7 +892,7 @@ async function runAutoNotifications(supabase: any, BASE_URL: string) {
     await Promise.all(chunk.map(async (p: any) => {
       const topic: NotificationTopic = mining.has(p.id) ? "ai" : Math.random() < 0.7 ? "mining" : "ai";
       const text = buildNotification(topic, p.first_name);
-      const buttonText = topic === "mining" ? "Start Mining" : "Open Nova AI";
+      const buttonText = topic === "mining" ? "Start Mining" : "✨ Open Clo";
       const url = APP_URL;
       try {
         const res = await fetch(`${BASE_URL}/sendMessage`, {
@@ -926,4 +926,3 @@ async function runAutoNotifications(supabase: any, BASE_URL: string) {
 
   return { ok: true, candidates: targets.length, sent, failed, variants: totalVariants() };
 }
-

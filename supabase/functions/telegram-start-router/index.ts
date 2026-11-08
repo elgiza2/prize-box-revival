@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-const APP_URL = "https://t.me/Noveaibot/App";
+const APP_URL = "https://nova.megsyai.com";
 const DEFAULT_WELCOME_IMAGE =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663964615372/pUhqRwCqipPIcFIm.png";
 
@@ -139,11 +139,11 @@ serve(async (req) => {
     }
 
     const text =
-      "<b>Welcome to Nova</b>\n\nMine $NOVA, TON, and USDT every eight hours. Upgrade your mining capacity. Invite friends. Earn more. Simple. Powerful. Rewarding. Start today.";
+      '<b>Welcome to Clo</b>\n\nMine CL, earn TON and USDT, complete missions, and invite friends to grow your balance.\n\n<a href="https://t.me/addemoji/TgAndroidIcons">Get the Telegram Android Icons emoji pack</a>';
     const replyMarkup = {
       inline_keyboard: [
-        [{ text: "Open Nova AI", url: APP_URL }],
-        [{ text: "Join Community", url: "https://t.me/noveall" }],
+        [{ text: "✨ Open Clo", url: APP_URL }],
+        [{ text: "🌐 Join Community", url: "https://t.me/noveall" }],
       ],
     };
     const sendText = async () => {

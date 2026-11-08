@@ -1,15 +1,14 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 const CHANNEL_ID = -1002616088306;
-const BOT_USERNAME = "Noveaibot";
-const APP_URL = "https://t.me/Noveaibot/App";
+const APP_URL = "https://nova.megsyai.com";
 
 const topics = [
-  { title: "Mine Gram & USDT every 8 hours", angle: "passive mining rewards" },
+  { title: "Mine CL, Gram & USDT every 8 hours", angle: "passive mining rewards" },
   { title: "Battle monsters, earn Gram", angle: "PvE boss battles with real Gram prize pool" },
   { title: "Invite friends, earn 50% forever", angle: "lifetime referral commission" },
   { title: "Buy servers, multiply your mining", angle: "server NFTs that boost mining" },
-  { title: "Daily tasks = daily rewards", angle: "free SIRI, Gram, USDT from tasks" },
+  { title: "Daily tasks = daily rewards", angle: "free CL, Gram, USDT from tasks" },
   { title: "Climb the leaderboard", angle: "compete for top damage rewards" },
 ];
 
@@ -23,17 +22,17 @@ async function generateText(apiKey: string, topic: { title: string; angle: strin
         {
           role: "system",
           content:
-            "You write short, punchy Telegram channel posts in English for a crypto play-to-earn app called Dogs. Style: clean, organized, 4-7 lines, use line breaks, NO emojis, NO hashtags. End with a clear call to action to open the bot.",
+            "You write short, punchy Telegram channel posts in English for a crypto play-to-earn app called Clo. Style: clean, organized, 4-7 lines, use line breaks, NO emojis, NO hashtags. Mention CL as the app currency and Gram/USDT only when relevant. End with a call to action linking to https://nova.megsyai.com.",
         },
         {
           role: "user",
-          content: `Write a Telegram post about: ${topic.title}. Angle: ${topic.angle}. The bot username is @${BOT_USERNAME}. Keep under 500 characters. End with: Open @${BOT_USERNAME} to start.`,
+          content: `Write a Telegram post about: ${topic.title}. Angle: ${topic.angle}. Keep under 500 characters. End with: Open Clo: ${APP_URL}`,
         },
       ],
     }),
   });
   const data = await res.json();
-  return data?.choices?.[0]?.message?.content?.trim() ?? `${topic.title}\n\nOpen @${BOT_USERNAME} to start.`;
+  return data?.choices?.[0]?.message?.content?.trim() ?? `${topic.title}\n\nOpen Clo: ${APP_URL}`;
 }
 
 async function generateImage(apiKey: string, topic: { title: string; angle: string }): Promise<Uint8Array | null> {

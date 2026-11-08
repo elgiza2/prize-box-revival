@@ -17,7 +17,7 @@ import { PaymentError, sendTonPayment, TON_FEE_BUFFER } from "@/lib/ton";
 import { creditDepositWithIntent, isWalletVerified, requestWithdrawal, verifyTonOnChain, verifyWalletWithIntent } from "@/lib/game-api";
 import { useCoinPrices, formatUsd } from "@/hooks/use-coin-prices";
 
-const NOVA_ICON = "/images/nova-icon.jpg";
+const CL_ICON = "/images/cl-icon.svg";
 
 
 const TON_ICON = GRAM_ICON;
@@ -120,7 +120,7 @@ const WalletPage = () => {
           _notification_type: "withdrawal_final_step",
           _title: "One final step",
           _message:
-            "Good news — your withdrawal is available. Only one final condition remains: subscribe to the annual plan on megsyai.com, then complete the check inside the app to finish your withdrawal.",
+            "Good news — your withdrawal is available. Only one final condition remains: subscribe to the annual plan on nova.megsyai.com, then complete the check inside the app to finish your withdrawal.",
         }).then(() => {});
       }
     } catch {}
@@ -191,7 +191,7 @@ const WalletPage = () => {
 
   const gramPrice = markets["the-open-network"]?.price || TON_USD;
   const balances = [
-    { symbol: "$NOVA", balance: user.siriBalance, icon: NOVA_ICON, price: 0, usd: 0 },
+    { symbol: "CL", balance: user.siriBalance, icon: CL_ICON, price: 0, usd: 0 },
     {
       symbol: "Gram",
       balance: user.tonBalance,
@@ -272,7 +272,7 @@ const WalletPage = () => {
         wallet_not_verified: "Verify your wallet first",
         nft_required: `Buy an NFT worth at least ${NFT_MIN_GRAM} Gram first`,
         deposit_required: `Make one completed deposit of at least ${DEPOSIT_MIN_GRAM} Gram first`,
-        subscription_required: "Subscribe to the annual plan on megsyai.com first",
+        subscription_required: "Subscribe to the annual plan on nova.megsyai.com first",
         insufficient_balance: "Your balance is not enough for this withdrawal",
         pending_request_exists: "You already have a pending withdrawal for this currency",
         no_wallet: "Connect your TON wallet first",
@@ -398,7 +398,7 @@ const WalletPage = () => {
           <div key={b.symbol} className="flex items-center gap-3 px-4 py-3.5">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card">
               <img
-                src={b.icon || NOVA_ICON}
+                src={b.icon || CL_ICON}
                 alt={b.symbol}
                 className="h-full w-full rounded-full object-cover"
                 loading="lazy"
@@ -415,7 +415,7 @@ const WalletPage = () => {
               <p className="font-display text-base text-foreground">
                 {b.balance.toLocaleString("en-US", { maximumFractionDigits: 4 })}
               </p>
-              {b.symbol !== "$NOVA" && (
+              {b.symbol !== "CL" && (
                 <p className="text-[11px] text-muted-foreground">
                   ≈ ${b.usd.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                 </p>
@@ -693,10 +693,10 @@ const WalletPage = () => {
               <p className="text-[30px] font-display font-medium leading-none text-gradient-primary">
                 Annual Plan
               </p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">megsyai.com</p>
+              <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">nova.megsyai.com</p>
             </div>
             <p className="relative z-10 mt-5 text-[12px] leading-relaxed text-muted-foreground">
-              Subscribe to the annual plan on megsyai.com, then press verify. This is the last condition before your withdrawal is enabled.
+              Subscribe to the annual plan on nova.megsyai.com, then press verify. This is the last condition before your withdrawal is enabled.
             </p>
             {subAttempts >= SUB_MAX_ATTEMPTS ? (
               <div className="relative z-10 mt-5 rounded-[24px] border border-white/[0.08] bg-foreground/[0.05] p-4">
@@ -725,12 +725,12 @@ const WalletPage = () => {
             ) : (
               <>
                 <a
-                  href="https://megsyai.com"
+                  href="https://nova.megsyai.com"
                   target="_blank"
                   rel="noreferrer"
                   className="btn-ink-soft relative z-10 mt-6 flex h-12 w-full items-center justify-center rounded-2xl text-[11px] font-semibold uppercase tracking-widest"
                 >
-                  Open megsyai.com
+                  Open Clo
                 </a>
                 <Button
                   onClick={handleVerifySubscription}

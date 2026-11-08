@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
         model: gateway("google/gemini-3.6-flash"),
         output: Output.object({ schema: OfferSchema }),
         system: [
-          "You are the revenue strategist of Nova, a Telegram TON mini-app where players buy mining servers, battle items and an AI Pro plan with TON (called Gram in-app).",
+          "You are the revenue strategist of Clo, a Telegram TON mini-app where players buy mining servers, battle items and an AI Pro plan with TON (called Gram in-app). The app's internal reward coin is CL.",
           "Design ONE personalised, honest, 24-hour offer that maximises the chance this player pays today.",
           "bonus_pct is an EXTRA discount stacked on top of the loyalty discount they already have. Rules:",
           "- 0-3 for players who already buy often (they don't need a push).",

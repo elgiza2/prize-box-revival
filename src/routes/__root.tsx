@@ -92,23 +92,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover",
       },
-      { title: "Nova AI - Mine, Battle & Earn Gram" },
+      { title: "Clo - Mine, Battle & Earn CL" },
       {
         name: "description",
-        content: "Nova AI: mine NOVA, battle monsters, and earn Gram cryptocurrency",
+        content: "Clo: earn CL, battle monsters, and collect Gram rewards",
       },
-      { name: "author", content: "Nova AI" },
-      { property: "og:title", content: "Nova AI - Mine, Battle & Earn Gram" },
+      { name: "author", content: "Clo" },
+      { property: "og:title", content: "Clo - Mine, Battle & Earn CL" },
       {
         property: "og:description",
-        content: "Nova AI: mine NOVA, battle monsters, and earn Gram cryptocurrency",
+        content: "Clo: earn CL, battle monsters, and collect Gram rewards",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Clo" },
+      { property: "og:image", content: "https://nova.megsyai.com/images/cl-icon.svg" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

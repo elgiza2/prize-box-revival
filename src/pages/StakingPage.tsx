@@ -37,13 +37,13 @@ import {
 } from "@/lib/staking-api";
 
 
-const NOVA_ICON = "/images/nova-icon.jpg";
+const CL_ICON = "/images/cl-icon.svg";
 
 const fmt = (n: number, d = 4) =>
   Number(n || 0).toLocaleString("en-US", { maximumFractionDigits: d });
 
-const label = (c: string) => (c === "ton" ? "gram" : "$NOVA");
-const icon = (c: string) => (c === "ton" ? GRAM_ICON : NOVA_ICON);
+const label = (c: string) => (c === "ton" ? "gram" : "CL");
+const icon = (c: string) => (c === "ton" ? GRAM_ICON : CL_ICON);
 
 const timeLeft = (iso: string) => {
   const ms = new Date(iso).getTime() - Date.now();

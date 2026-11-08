@@ -33,21 +33,21 @@
 
 @layer base {
   :root {
-    /* White + mint green + soft pink — Nova light theme */
+    /* White + mint green + soft pink — Clo dark theme */
     --background: 160 16% 6%;
     --foreground: 0 0% 100%;
     --card: 220 12% 10%;
     --card-foreground: 0 0% 100%;
     --popover: 220 12% 10%;
     --popover-foreground: 0 0% 100%;
-    --primary: 158 78% 40%;
+    --primary: 207 92% 56%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 164 80% 62%;
+    --primary-glow: 194 96% 68%;
     --secondary: 220 12% 16%;
     --secondary-foreground: 0 0% 100%;
     --muted: 220 10% 18%;
     --muted-foreground: 220 8% 78%;
-    --accent: 338 85% 68%;
+    --accent: 267 82% 68%;
     --accent-foreground: 0 0% 100%;
     --action: 0 0% 100%;
     --action-foreground: 220 14% 10%;
@@ -56,10 +56,10 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 100% / 0.14;
     --input: 0 0% 100% / 0.12;
-    --ring: 158 78% 40%;
+    --ring: 207 92% 56%;
     --radius: 1.5rem;
     --ton-blue: 216 100% 56%;
-    --neon-green: 158 78% 40%;
+    --neon-green: 157 72% 46%;
     /* Aviator game surface — clean cyan/space palette */
     --aviator: 188 100% 55%;
     --aviator-glow: 190 100% 72%;
@@ -74,12 +74,12 @@
     --gold: 38 95% 55%;
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 160 22% 14%;
-    --sidebar-primary: 158 78% 40%;
+    --sidebar-primary: 207 92% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 160 20% 95%;
     --sidebar-accent-foreground: 160 22% 18%;
     --sidebar-border: 160 18% 90%;
-    --sidebar-ring: 158 78% 40%;
+    --sidebar-ring: 207 92% 56%;
 
     /* Liquid glass material tokens */
     --glass-tint: 160 14% 10%;
@@ -370,7 +370,7 @@
     backdrop-filter: blur(18px) saturate(140%);
   }
 
-  /* ---- Nova editorial UI kit (merged design language) ---- */
+  /* ---- Clo editorial UI kit (merged design language) ---- */
   .nv-card {
     background: rgba(18, 26, 24, 0.6);
     border-radius: 24px;

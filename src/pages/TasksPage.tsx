@@ -39,7 +39,7 @@ interface TaskCompletionResult {
 const REWARD_LABEL: Record<string, string> = {
   ton: "Gram",
   usdt: "USDT",
-  siri: "$NOVA",
+  siri: "CL",
 };
 
 const displayTaskTitle = (task: Task) => {
@@ -113,7 +113,7 @@ const TasksPage = () => {
     const isMegsyTask = task.verification_type === "megsy_monthly_subscription";
     // Personal Megsy link per user so the subscription can be attributed on Megsy side.
     const taskLink = isMegsyTask
-      ? `https://megsyai.com?ref=nova_${user.telegramUser.id}`
+      ? `https://nova.megsyai.com?ref=nova_${user.telegramUser.id}`
       : task.link;
 
     // Open the task link immediately so popup blockers don't fire
@@ -223,9 +223,9 @@ const TasksPage = () => {
   const shareReferral = () => {
     const tg = (window as any).Telegram?.WebApp;
     if (tg?.openTelegramLink) {
-      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent("Join Nova AI and earn Gram & USDT!")}`);
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent("Join Clo and earn CL, TON & USDT!")}`);
     } else {
-      window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent("Join Nova AI and earn Gram & USDT!")}`, "_blank");
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent("Join Clo and earn CL, TON & USDT!")}`, "_blank");
     }
   };
 
@@ -261,7 +261,7 @@ const TasksPage = () => {
               <div className="space-y-3">
               <AnimatePresence>
                 {availableTasks.map((task, i) => {
-                  const label = REWARD_LABEL[task.reward_type] || "$NOVA";
+                  const label = REWARD_LABEL[task.reward_type] || "CL";
                   const busy = claiming === task.id;
                   const isPartnerTask = task.verification_type.startsWith("gift_kombat_") || task.verification_type === "megsy_monthly_subscription";
                   const verifyPartnerTask = task.verification_type.startsWith("gift_kombat_")
@@ -347,7 +347,7 @@ const TasksPage = () => {
                   <p className="text-xs text-muted-foreground">Share your referral link with friends</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <p className="text-xs text-muted-foreground">They join Nova AI and start playing</p>
+                  <p className="text-xs text-muted-foreground">They join Clo and start playing</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <p className="text-xs text-muted-foreground">Earn <span className="text-ton-blue font-bold">50%</span> of every Gram purchase they make!</p>

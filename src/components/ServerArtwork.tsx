@@ -42,6 +42,7 @@ const weaponImageMap: Record<string, string> = {
   "nature-staff": natureStaff,
   "Phantom Grid": phantomGrid,
   "phantom-grid": phantomGrid,
+  "Clo Cluster": novaCluster,
   "Nova Cluster": novaCluster,
   "nova-cluster": novaCluster,
   "Hyper Matrix": hyperMatrix,

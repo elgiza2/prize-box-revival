@@ -193,7 +193,7 @@ const AdminPage = () => {
                   </Button>
                 </div>
                 <div className="flex gap-3 mt-1 text-muted-foreground flex-wrap">
-                  <span>NOVA: {Number(u.siri_balance).toFixed(0)}</span>
+                  <span>CL: {Number(u.siri_balance).toFixed(0)}</span>
                   <span>Gram: {Number(u.ton_balance).toFixed(2)}</span>
                   <span>USDT: {Number(u.usdt_balance).toFixed(2)}</span>
                 </div>
@@ -211,7 +211,7 @@ const AdminPage = () => {
             <div className="flex gap-2">
               <Input type="number" placeholder="Reward" value={newTask.reward_amount} onChange={(e) => setNewTask((p) => ({ ...p, reward_amount: Number(e.target.value) }))} className="rounded-xl text-xs" />
               <select value={newTask.reward_type} onChange={(e) => setNewTask((p) => ({ ...p, reward_type: e.target.value }))} className="bg-muted rounded-xl px-2 text-xs text-foreground">
-                <option value="siri">NOVA</option><option value="ton">Gram</option><option value="usdt">USDT</option>
+                <option value="siri">CL</option><option value="ton">Gram</option><option value="usdt">USDT</option>
               </select>
               <select value={newTask.task_type} onChange={(e) => setNewTask((p) => ({ ...p, task_type: e.target.value }))} className="bg-muted rounded-xl px-2 text-xs text-foreground">
                 <option value="social">Social</option><option value="daily">Daily</option><option value="special">Special</option>

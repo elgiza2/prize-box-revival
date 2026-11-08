@@ -59,7 +59,7 @@ const PLAN_PRICE = 8;
 const PLAN_PRICE_TON = 8;
 
 const MODES: { id: Mode; label: string; icon: typeof MessageCircle; placeholder: string }[] = [
-  { id: "chat", label: "Chat", icon: MessageCircle, placeholder: "Ask Nova anything…" },
+  { id: "chat", label: "Chat", icon: MessageCircle, placeholder: "Ask Clo anything…" },
   { id: "images", label: "Images", icon: ImageIcon, placeholder: "Describe the image to create…" },
   { id: "videos", label: "Videos", icon: Video, placeholder: "Describe the video to create…" },
 ];
@@ -407,7 +407,7 @@ export default function AiPage() {
       <header className="relative z-20 flex items-center justify-between px-5 pt-safe-lg pb-3">
         <button type="button" onClick={reset} className="text-left">
           <span className="hero-title block text-[1.9rem] leading-none">
-            Nova <span className="hero-title-italic">AI</span>
+            Clo <span className="hero-title-italic">AI</span>
           </span>
         </button>
 
@@ -774,7 +774,7 @@ export default function AiPage() {
             <div className="relative z-10">
               <DialogHeader className="space-y-1.5 text-center sm:text-center">
                 <DialogTitle className="text-[clamp(20px,5.5vw,26px)] font-display font-medium leading-none text-foreground">
-                  Nova AI Pro
+                  Clo AI Pro
                 </DialogTitle>
                 <DialogDescription className="text-[clamp(11px,3vw,12px)] text-muted-foreground">
                   One plan, everything unlimited for 30 days.

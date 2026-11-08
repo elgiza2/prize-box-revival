@@ -5,49 +5,49 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const APP_URL = "https://t.me/Noveaibot/App";
+const APP_URL = "https://nova.megsyai.com";
 
 // Rotating clean English messages about NFT, staking, mining, referrals, battles.
 const MESSAGES: { title: string; message: string }[] = [
   {
-    title: "NOVA | Stake and Grow",
+    title: "Clo | Stake and Grow",
     message:
-      "Your NOVA works best when it works for you. Stake your balance and watch your rewards grow every day. Open the app and start staking now.",
+      "Your CL works best when it works for you. Stake your balance and watch your rewards grow every day. Open the app and start staking now.",
   },
   {
-    title: "NOVA | NFT Servers",
+    title: "Clo | NFT Servers",
     message:
-      "NFT servers multiply your mining power. Upgrade your setup, boost your hourly output, and earn more NOVA while you sleep.",
+      "NFT servers multiply your mining power. Upgrade your setup, boost your hourly output, and earn more CL while you sleep.",
   },
   {
-    title: "NOVA | Mining Reminder",
+    title: "Clo | Mining Reminder",
     message:
-      "Your mining session may be ready to collect. Open NOVA, claim your rewards, and start a new session to keep earning.",
+      "Your mining session may be ready to collect. Open CL, claim your rewards, and start a new session to keep earning.",
   },
   {
-    title: "NOVA | Battle Monsters",
+    title: "Clo | Battle Monsters",
     message:
       "Monsters are waiting. Win battles, earn rewards, and climb the leaderboard. Every victory brings you closer to the top.",
   },
   {
-    title: "NOVA | Invite and Earn",
+    title: "Clo | Invite and Earn",
     message:
-      "Invite your friends to NOVA and earn a share of their activity forever. The bigger your team, the bigger your rewards.",
+      "Invite your friends to CL and earn a share of their activity forever. The bigger your team, the bigger your rewards.",
   },
   {
-    title: "NOVA | Daily Tasks",
+    title: "Clo | Daily Tasks",
     message:
-      "Fresh tasks are waiting for you. Complete them in minutes and collect free NOVA, TON, and USDT rewards.",
+      "Fresh tasks are waiting for you. Complete them in minutes and collect free CL, TON, and USDT rewards.",
   },
   {
-    title: "NOVA | Your Wallet",
+    title: "Clo | Your Wallet",
     message:
-      "Check your NOVA wallet today. Track your balances, review your earnings, and plan your next move in the ecosystem.",
+      "Check your CL wallet today. Track your balances, review your earnings, and plan your next move in the ecosystem.",
   },
   {
-    title: "NOVA | Community Growth",
+    title: "Clo | Community Growth",
     message:
-      "Thousands of players are already earning with NOVA. Stay active, keep mining, and grow with the community every day.",
+      "Thousands of players are already earning with CL. Stay active, keep mining, and grow with the community every day.",
   },
 ];
 
